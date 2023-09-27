@@ -79,9 +79,9 @@ for i in range(numLines):
         lst = list(linesWords[i])
         lst.insert(0, ";")
         lines[i] = "".join(lst)
-        continue
-    del linesWords[i][MISC]
-    lines[i] = "\t".join(linesWords[i])
+    else:
+        del linesWords[i][MISC]
+        lines[i] = "\t".join(linesWords[i])
 
 fullText = "\n".join(lines)
 
