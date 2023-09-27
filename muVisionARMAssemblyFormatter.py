@@ -18,6 +18,10 @@
 
 filename = "test"
 labelTag = "testLabel"
+ADDRESS = 0
+MISC = 1
+COMMAND = 2
+ARGUMENTS = 3
 
 print("Paste the name of the file you would like to convert. EX: \"filename\" (.txt will automatically be appended)")
 filename = input() + ".txt"
@@ -30,7 +34,6 @@ formattedFileSuffix = "-ARMFormatted"
 fullText = ""
 with open(filename) as f:
     fullText = f.read()
-    print(fullText);
 f.close()
 
 
@@ -39,41 +42,37 @@ numLines = len(lines)
 linesWords = [[""]]*numLines
 
 for i in range(numLines):
-    if lines[i][0] != '0':
+    if lines[i][ADDRESS] != '0':
         linesWords[i] = lines[i]
         continue
     linesWords[i] = list(filter(None, lines[i].split(" ")))
-    print(linesWords[i])
 
 
 labelIndexes = [0]  #dummy first
 labelIndexes.clear()
 
-
 labelNum = 0;
 for i in range(numLines):
     if isinstance(linesWords[i], str):
         continue
-    print(str(i))
     for j in range(numLines):
         if isinstance(linesWords[j], str):
             continue
-        if len(linesWords[j]) <= 3:
+        if len(linesWords[j]) <= ARGUMENTS:
             continue
-        if(linesWords[i][0] in linesWords[j][3]):
+        if(linesWords[i][ADDRESS] in linesWords[j][ARGUMENTS]):
             labelIndexes.append(j)
-            print("Append + "+linesWords[i][0])
 
     if len(labelIndexes) > 0:
         label = labelTag + str(labelNum)
         labelNum = labelNum+1
         while len(labelIndexes) > 0:
             j = labelIndexes.pop()
-            index = linesWords[j][3].index(linesWords[i][0])
-            linesWords[j][3] = linesWords[j][3][:index] + label
-        linesWords[i][0] = label
+            index = linesWords[j][ARGUMENTS].index(linesWords[i][0])
+            linesWords[j][ARGUMENTS] = linesWords[j][ARGUMENTS][:index] + label
+        linesWords[i][ADDRESS] = label
     else:
-        linesWords[i][0] = ""
+        linesWords[i][ADDRESS] = ""
     
 for i in range(numLines):
     if isinstance(linesWords[i], str):
@@ -81,13 +80,10 @@ for i in range(numLines):
         lst.insert(0, ";")
         lines[i] = "".join(lst)
         continue
-    del linesWords[i][1]
+    del linesWords[i][MISC]
     lines[i] = "\t".join(linesWords[i])
 
 fullText = "\n".join(lines)
-
-print("")
-print(fullText)
 
 i = filename.index('.')
 filename = filename[:i] + formattedFileSuffix + filename[i:]
@@ -95,3 +91,5 @@ filename = filename[:i] + formattedFileSuffix + filename[i:]
 with open(filename, "w") as f:
     f.write(fullText)
 f.close()
+
+print("\nCreated file: " + filename)
